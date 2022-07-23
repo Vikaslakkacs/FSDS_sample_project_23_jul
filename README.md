@@ -1,1 +1,8 @@
-# FSDS_sample_project_23_jul
+# Sample Project
+
+## Requirements:
+
+1. []
+2. []
+3. []
+4. []
