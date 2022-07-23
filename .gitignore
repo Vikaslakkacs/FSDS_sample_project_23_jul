@@ -104,6 +104,7 @@ celerybeat.pid
 # Environments
 .env
 .venv
+fsds_machinelearning_1/
 env/
 venv/
 ENV/
