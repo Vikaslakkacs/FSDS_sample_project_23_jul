@@ -96,3 +96,9 @@ to stop docker container
 ```
 docker stop <container_id>
 ```
+
+
+```
+Create setup file and provide the inputs
+script: python setup.py install
+```
