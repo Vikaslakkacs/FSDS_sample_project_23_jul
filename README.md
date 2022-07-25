@@ -102,3 +102,9 @@ docker stop <container_id>
 Create setup file and provide the inputs
 script: python setup.py install
 ```
+Note: Whenever changing any code in setup file and running again, make sure the version in setup file is changed.
+```
+Add "-e ." in the requirements.txt file: This will install the requirements, dependencies if there are any packages that are being present in the project.
+
+```
+Note: While using "pip intall -r requirements.txt" and if "-e ." is present then it will check for setup.py file and is going to instal custom packages also. but when we are going to install using "setup.py install "command then we do not need "-e ." command as the custom packages are considered from "packages" parameter.

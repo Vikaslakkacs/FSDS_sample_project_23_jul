@@ -1,4 +1,5 @@
-from setuptools import setup
+from gettext import find
+from setuptools import setup, find_packages
 from typing import List 
 
 ### Declaring variables for setup function.
@@ -17,7 +18,7 @@ def get_requirements_list()->List[str]:
         List[str]: list of packages available in requirements.txt file.
     """
     with open("requirements.txt","r",) as requirements_file:
-        return requirements_file.readlines()
+        return requirements_file.readlines().remove("-e .")
 
 
 
@@ -26,7 +27,8 @@ setup(
     version=VERSION,
     author=AUTHOR,
     description=DESCRIPTION,
-    packages=PACKAGES,
-    install_requires=get_requirements_list()
+    packages=find_packages(), # it will return the packages whereever the folder has __init__.py file in it
+                              # here it will pick 'housing'
+    install_requires=get_requirements_list()# What external libraries that require(requirements.txt)
 
 )
