@@ -108,3 +108,11 @@ Add "-e ." in the requirements.txt file: This will install the requirements, dep
 
 ```
 Note: While using "pip intall -r requirements.txt" and if "-e ." is present then it will check for setup.py file and is going to instal custom packages also. but when we are going to install using "setup.py install "command then we do not need "-e ." command as the custom packages are considered from "packages" parameter.
+
+
+```
+Steps for processing
+* Maintain utils folder for all the miscellaneous functions 
+* Create config folder outside housing
+    * Create yaml and configuration.py files
+```

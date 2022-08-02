@@ -21,8 +21,9 @@ class HousingException(Exception):
         return error_message
     
     ## Error message
+    ## Whenever we use class in print statement it will pring __str__ value
     def __str__(self):
         return self.error_message
-    
+    ### when ever we create class in variable it will represent __repr__ value
     def __repr__(self)-> str:
         return HousingException.__name__.str()
