@@ -1,4 +1,4 @@
-from flask import Flask, app
+'''from flask import Flask, app
 from housing.logger import logging
 from housing.exception import HousingException
 import sys
@@ -19,3 +19,9 @@ def index():
 
 if __name__=="__main__":
     app.run(debug=True)
+    '''
+from housing.config.configuration import Configuration
+
+if __name__=="__main__":
+    config= Configuration()
+    print(config.training_pipeline_config)
