@@ -113,6 +113,8 @@ Note: While using "pip intall -r requirements.txt" and if "-e ." is present then
 ```
 Steps for processing
 * Maintain utils folder for all the miscellaneous functions 
+* Every file that is going to create using config and constants that will be created in artifact folder. eg: data ingestion, data validation etc.
+
 * Create config folder outside housing
     * Create yaml and configuration.py files
 ```

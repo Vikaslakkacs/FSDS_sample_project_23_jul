@@ -23,5 +23,5 @@ if __name__=="__main__":
 from housing.config.configuration import Configuration
 
 if __name__=="__main__":
-    config= Configuration()
-    print(config.training_pipeline_config)
+    config= Configuration() 
+    print(config.data_ingestion_config)
