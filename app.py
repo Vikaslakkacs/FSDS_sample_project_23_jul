@@ -24,4 +24,4 @@ from housing.config.configuration import Configuration
 
 if __name__=="__main__":
     config= Configuration() 
-    print(config.data_ingestion_config)
+    print(config.model_trainer_config)

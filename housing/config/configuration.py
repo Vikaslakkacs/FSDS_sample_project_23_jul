@@ -19,6 +19,9 @@ class Configuration:
             self.time_stamp=CURRENT_TIME_STAMP
             self.training_pipeline_config= self.get_training_pipeline_config()
             self.data_ingestion_config= self.get_data_ingestion_config()
+            self.data_validation_config=self.get_data_validation_config()
+            self.data_transformation_config= self.get_data_transformation_config()
+            self.model_trainer_config= self.get_model_trainer_config()
                
         except Exception as e:
             raise HousingException(e, sys) from e
@@ -74,20 +77,74 @@ class Configuration:
             raise HousingException(e, sys) from e
 
     def get_data_validation_config(self)-> DataValidationConfig:
-        pass
+        try:
+            artifact_dir= self.training_pipeline_config.artifact_dir
+            data_validation_info=self.config_info[DATA_VALIDATION_CONFIG_KEY]
+            data_validation_artifact_dir=os.path.join(artifact_dir,DATA_VALIDATION_SCHEMA_DIR,self.time_stamp)
+            schema_file_path=os.path.join(data_validation_artifact_dir, data_validation_info[DATA_VALIDATION_SCHEMA_DIR])
+            
+            data_validation_config=DataValidationConfig(schema_file_path=schema_file_path)
+            logging.info(f"data Validaton config: {data_validation_config}")
+            return data_validation_config
+        except Exception as e:
+            raise HousingException(e, sys) from e
 
     def get_data_transformation_config(self)-> DataTransformationConfig:
-        pass
+        try:
+            artifact_dir= self.training_pipeline_config.artifact_dir
+            data_transformation_info= self.config_info[DATA_TRANSFORMATION_CONFIG_KEY]
+            data_transformation_artifact_dir= os.path.join(artifact_dir,DATA_TRANSFORMATION_TRANSFORMED_DIR, self.time_stamp)
+            add_bedroom_per_room=data_transformation_info[DATA_TRANSFORMATION_ADD_BEDROOM]
+            data_transformed_dir=os.path.join(data_transformation_artifact_dir,
+                                               data_transformation_info[DATA_TRANSFORMATION_TRANSFORMED_DIR])
+            transformed_train_dir=os.path.join(data_transformed_dir,data_transformation_info[DATA_TRANSFORMATION_TRANSFORMED_TRAIN_DIR])
+            transformed_test_dir=os.path.join(data_transformed_dir, data_transformation_info[DATA_TRANSFORMATION_TRANSFORMED_TEST_DIR])
+            preprocessed_object_file_path= os.path.join(data_transformed_dir, data_transformation_info[DATA_TRANSFORMATION_PREPROCESSING_DIR])
 
+
+            data_transformation_config= DataTransformationConfig(add_bedroom_per_room=add_bedroom_per_room,
+                                                                 transformed_train_dir=transformed_train_dir,
+                                                                 transformed_test_dir=transformed_test_dir,
+                                                                 preprocessed_object_file_path=preprocessed_object_file_path)
+            logging.info(f"data_transformation_config: {data_transformation_config}")
+            return data_transformation_config
+        except Exception as e:
+            raise HousingException(e, sys) from e
+            
     def get_model_trainer_config(self)-> ModelTrainerConfig:
-        pass
+        try:
+            artifact_dir= self.training_pipeline_config.artifact_dir
+            data_trainer_info= self.config_info[MODEL_TRAINING_CONFIG_KEY]
+            data_trainer_artifact_dir= os.path.join(artifact_dir, data_trainer_info[MODEL_TRAINING_TRAINED_MODEL_DIR], self.time_stamp)
+            trained_model_file_path=data_trainer_artifact_dir
+            trained_model_config_file_path=os.path.join(data_trainer_artifact_dir, data_trainer_info[MODEL_TRAINING_CONFIG_DIR])
+            base_accuracy=data_trainer_info[MODEL_TRAINING_BASE_ACCURACY]
 
+            model_training_config= ModelTrainerConfig(trained_model_file_path=trained_model_file_path,
+                                                      trained_model_config_file_path=trained_model_config_file_path,
+                                                      base_accuracy=base_accuracy)
+
+            logging.info(f"model_trainer_config:{model_training_config}")
+            return model_training_config
+        except Exception as e:
+            raise HousingException(e, sys) from e
+            
     def get_model_evaluation_config(self)-> ModelEvaluationConfig:
-        pass
-
+        try:
+            pass
+        except Exception as e:
+            raise HousingException(e, sys) from e
+            
     def get_model_pusher_config(self)-> ModelPusherConfig:
-        pass
+        try:
+            artifact_dir= self.training_pipeline_config.artifact_dir
+            model_pusher_info= self.config_info[MODEL_EVALUATION_CONFIG_KEY]
+            export_dir_path= 
 
+            model_pusher_config= ModelPusherConfig(export_dir_path=export_dir_path)
+        except Exception as e:
+            raise HousingException(e, sys) from e
+            
     def get_training_pipeline_config(self)-> TrainingPipelineConfig:
         try:
             training_pipeline_config= self.config_info[TRAINING_PIPELINE_CONFIG_KEY]
