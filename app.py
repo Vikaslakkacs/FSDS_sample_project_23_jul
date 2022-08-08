@@ -20,8 +20,8 @@ def index():
 if __name__=="__main__":
     app.run(debug=True)
     '''
-from housing.config.configuration import Configuration
+from housing.pipeline.pipeline import Pipeline
+if __name__=="__main__": 
+    pipeline_exec= Pipeline()
+    pipeline_exec.run_pipeline()
 
-if __name__=="__main__":
-    config= Configuration() 
-    print(config.model_trainer_config)

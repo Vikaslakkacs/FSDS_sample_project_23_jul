@@ -139,7 +139,8 @@ class Configuration:
         try:
             artifact_dir= self.training_pipeline_config.artifact_dir
             model_pusher_info= self.config_info[MODEL_EVALUATION_CONFIG_KEY]
-            export_dir_path= 
+            export_dir_path= self.config_info[MODEL_PUSHER_EXPORT_DIR]
+            export_dir_path= os.path.join(model_pusher_info, export_dir_path)
 
             model_pusher_config= ModelPusherConfig(export_dir_path=export_dir_path)
         except Exception as e:

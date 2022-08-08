@@ -131,3 +131,6 @@ dmypy.json
 
 ##Flask application folders
 .DS_Store
+
+## training and test docs
+housing/artifact
