@@ -14,7 +14,7 @@ class HousingException(Exception):
     def get_detailed_error_message(error_message:Exception, error_details:sys)-> str:
         ### Returns tuple with traceback string
         _, _, exeception_traceback= error_details.exc_info()
-        line_number= exeception_traceback.tb_frame.f_lineno
+        line_number= exeception_traceback.tb_lineno
         file_name= exeception_traceback.tb_frame.f_code.co_filename
 
         error_message= f"Error occurred in script:[{file_name}] at line number: [{line_number}] error message: [{error_message}]"
