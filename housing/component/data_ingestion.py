@@ -132,12 +132,12 @@ class DataIngestion:
                 strat_test_set.to_csv(test_file_path, index=False)
 
             ## Data ingestion artifact
-            DataIngestionArtifact(train_file_path=train_file_path,
+            data_ingestion_artifact= DataIngestionArtifact(train_file_path=train_file_path,
                                  test_file_path= test_file_path,
                                   is_ingested= True,
                                    message= f"Data ingestion completed successfully")
             logging.info(f"DataIngestionArtifact is completed: {DataIngestionArtifact}")
-            return DataIngestionArtifact
+            return data_ingestion_artifact
 
         except Exception as e:
             raise HousingException(e, sys) from e
@@ -149,8 +149,9 @@ class DataIngestion:
             ##File extraction
             self.extract_tgz_file(tgz_file_path=tgz_file_path)
             logging.info(f"File Extraction is done")
-            self.split_data_as_train_test()
+            data_ingestion_artifact= self.split_data_as_train_test()
             logging.info(f"Splitting of train and test data is done")
+            return data_ingestion_artifact
         except Exception as e:
             raise HousingException(e, sys) from e
     
