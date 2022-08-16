@@ -7,10 +7,12 @@ from housing.exception import HousingException
 from housing.config.configuration import Configuration
 def main():
     try:
-        pipeline=Pipeline()
-        pipeline.run_pipeline()
+        #pipeline=Pipeline()
+        #pipeline.run_pipeline()
         # config= Configuration().get_data_validation_config()
         # print(config)
+        config= Configuration()
+        print(config.get_data_transformation_config())
     except Exception as e:
         logging.error(f"{e}")
         print(e)

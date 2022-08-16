@@ -35,13 +35,14 @@ DATA_VALIDATION_REPORT_FILE_NAME_KEY = "report_file_name"
 DATA_VALIDATION_REPORT_PAGE_FILE_NAME_KEY = "report_page_file_name"
 
 ### Data Transformation related variables
+DATA_TRANSFORMATION_ARTIFACT_DIR="data_transformation"
 DATA_TRANSFORMATION_CONFIG_KEY="data_transformation_config"
-DATA_TRANSFORMATION_ADD_BEDROOM="add_bedroom_per_room"
-DATA_TRANSFORMATION_TRANSFORMED_DIR="transformed_dir"
-DATA_TRANSFORMATION_TRANSFORMED_TRAIN_DIR="transformed_train_dir"
-DATA_TRANSFORMATION_TRANSFORMED_TEST_DIR="transformed_test_dir"
-DATA_TRANSFORMATION_PREPROCESSING_DIR="preprocessing_dir"
-DATA_TRANSFORMATION_PREPROCESSED_OBJECT_FILE_NAME="preprocessed_object_file_name"
+DATA_TRANSFORMATION_ADD_BEDROOM_PER_ROOM_KEY="add_bedroom_per_room"
+DATA_TRANSFORMATION_DIR_NAME_KEY="transformed_dir"
+DATA_TRANSFORMATION_TRAIN_DIR_NAME_KEY="transformed_train_dir"
+DATA_TRANSFORMATION_TEST_DIR_NAME_KEY="transformed_test_dir"
+DATA_TRANSFORMATION_PREPROCESSING_DIR_KEY="preprocessing_dir"
+DATA_TRANSFORMATION_PREPROCESSED_FILE_NAME_KEY="preprocessed_object_file_name"
 
 
 ## Model Training related variables
