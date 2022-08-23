@@ -4,7 +4,8 @@ import yaml
 from housing.exception import HousingException
 import numpy as np
 import dill
-
+import pandas as pd
+from housing.constant import *
 def read_yaml_file(file_path:str)->dict:
     """reads YAML file with package yaml
 
@@ -18,6 +19,39 @@ def read_yaml_file(file_path:str)->dict:
         with open(file_path,'rb') as yaml_file:
             return yaml.safe_load(yaml_file)
 
+    except Exception as e:
+        raise HousingException(e, sys) from e
+
+
+def load_data(file_path:str, schema_file_path:str) -> pd.DataFrame:
+    """Changing the type cast of the features according to schema file
+
+    Args:
+        file_path (str): _description_
+        schema_file_path (str): schema file path where all the type cast details of features are available
+
+    Returns:
+        pd.DataFrame: dataset with corrected type cast of features to make transformation
+    """
+    try:
+        dataset_schema= read_yaml_file(schema_file_path)
+        schema= dataset_schema[DATASET_SCHEMA_COLUMNS_KEY]
+
+        ##Get the data frame
+        dataframe= pd.read_csv(file_path)
+
+        error_message= ""
+
+        ### loop around the columns and change the data types
+        for column in dataframe.columns:
+            if column in list(schema.keys()):
+
+                dataframe[column].astype(schema[column])
+            else:
+                error_message= f"{error_message} \nColumn: {column} is not in schema."
+                raise Exception(error_message)
+        return dataframe
+        
     except Exception as e:
         raise HousingException(e, sys) from e
 

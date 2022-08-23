@@ -1,5 +1,4 @@
-from argparse import ONE_OR_MORE
-from msilib.schema import CreateFolder
+
 import os, sys
 from ssl import OP_NO_RENEGOTIATION
 from housing.entity.artifact_entity import DataIngestionArtifact, DataValidationArtifact, DataTransformationArtifact
@@ -13,7 +12,8 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
-from housing.util.util import read_yaml_file, save_object, save_numpy_array_data, load_numpy_array_data
+from housing.util.util import (read_yaml_file, save_object, save_numpy_array_data,
+                                 load_numpy_array_data, load_data)
 from housing.constant import *
 
 
@@ -92,38 +92,6 @@ class DataTransformation:
         except Exception as e:
             raise HousingException(e, sys) from e
 
-    @staticmethod
-    def load_data(file_path:str, schema_file_path:str) -> pd.DataFrame:
-        """Changing the type cast of the features according to schema file
-
-        Args:
-            file_path (str): _description_
-            schema_file_path (str): schema file path where all the type cast details of features are available
-
-        Returns:
-            pd.DataFrame: dataset with corrected type cast of features to make transformation
-        """
-        try:
-            dataset_schema= read_yaml_file(schema_file_path)
-            schema= dataset_schema[DATASET_SCHEMA_COLUMNS_KEY]
-
-            ##Get the data frame
-            dataframe= pd.read_csv(file_path)
-
-            error_message= ""
-
-            ### loop around the columns and change the data types
-            for column in dataframe.columns:
-                if column in list(schema.keys()):
-
-                    dataframe[column].astype(schema[column])
-                else:
-                    error_message= f"{error_message} \nColumn: {column} is not in schema."
-                    raise Exception(error_message)
-            return dataframe
-            
-        except Exception as e:
-            raise HousingException(e, sys) from e
 
     def get_transformer_object(self)->ColumnTransformer:
         """Creating pipeline which transformes both numerical and categorical objects
@@ -177,6 +145,58 @@ class DataTransformation:
             DataTransformationArtifact: Data Transformation artifact details
         """
         try:
-            preprocessing_obj= self.get_transformer_object
+            logging.info(f"Getting preprocessing object")
+            preprocessing_obj= self.get_transformer_object()
+            train_file_path= self.data_ingestion_artifact.train_file_path
+            test_file_path= self.data_ingestion_artifact.test_file_path
+            schema_file_path= self.data_validation_artifact.schema_file_path
+
+            logging.info(f"loading train and test datasets")
+            train_df= load_data(file_path=train_file_path, schema_file_path=schema_file_path)
+            test_df= load_data(file_path=test_file_path, schema_file_path=schema_file_path)
+
+            ##Read Schema
+            logging.info(f"reading schemas")
+            schema= read_yaml_file(schema_file_path)
+            target_column_name= schema[TARGET_COLUMN_KEY]
+
+            ### Seggregating input and output features
+            input_feature_train_df= train_df.drop(columns=[target_column_name], axis=1)
+            target_fearure_train_df= train_df[[target_column_name]]
+            input_feature_test_df= test_df.drop(columns=[target_column_name], axis=1)
+            target_feature_test_df= test_df[[target_column_name]]
+
+            ### Transforming the data
+            logging.info(f"Transforming train and test datsets using preprocessing object")
+            input_feature_train_arr= preprocessing_obj.fit_transform(input_feature_train_df)
+            input_feature_test_arr= preprocessing_obj.transform(input_feature_test_df)
+
+            ###Create train and test arrays by joining both input and output features
+            logging.info(f"combining input and output features")
+            train_arr= np.c_[input_feature_train_arr, np.array(target_fearure_train_df)]
+            test_arr= np.c_[input_feature_test_arr, np.array(target_feature_test_df)]
+
+            ### Saving train and test arrays into object
+            logging.info(f"Saving the train and test preprocessed arrays into file")
+            transformed_train_dir= self.data_transformation_config.transformed_train_dir
+            transformed_test_dir= self.data_transformation_config.transformed_test_dir
+            train_file_name= os.path.basename(train_file_path).replace(".csv", ".npz")
+            test_file_name= os.path.basename(test_file_path).replace(".csv", ".npz")
+            transformed_train_file_path=os.path.join(transformed_train_dir, train_file_name)
+            transformed_test_file_path= os.path.join(transformed_test_dir, test_file_name)
+
+            save_numpy_array_data(file_path=transformed_train_file_path,array= train_arr)
+            save_numpy_array_data(file_path=transformed_test_file_path,array= test_arr)
+            logging.info(f"Saving the preprocessed object")
+            preprocessing_obj_file_path= self.data_transformation_config.preprocessed_object_file_path
+            save_object(file_path=preprocessing_obj_file_path, obj= preprocessing_obj)
+            data_transformation_artifact= DataTransformationArtifact(is_transformed=True,
+                                                                        message="Data transformation successfull",
+                                                                        transformed_train_file_path=transformed_train_file_path,
+                                                                        transformed_test_file_path=transformed_test_file_path,
+                                                                        preprocessed_object_file_path=preprocessing_obj_file_path)
+            logging.info(f"Data Transformation artifact: {data_transformation_artifact}")
+            return data_transformation_artifact
+
         except Exception as e:
             raise HousingException(e, sys) from e

@@ -161,23 +161,37 @@ class Configuration:
             raise HousingException(e,sys) from e
 
             
-    def get_model_trainer_config(self)-> ModelTrainerConfig:
+    def get_model_trainer_config(self) -> ModelTrainerConfig:
         try:
-            artifact_dir= self.training_pipeline_config.artifact_dir
-            data_trainer_info= self.config_info[MODEL_TRAINING_CONFIG_KEY]
-            data_trainer_artifact_dir= os.path.join(artifact_dir, data_trainer_info[MODEL_TRAINING_TRAINED_MODEL_DIR], self.time_stamp)
-            trained_model_file_path=data_trainer_artifact_dir
-            trained_model_config_file_path=os.path.join(data_trainer_artifact_dir, data_trainer_info[MODEL_TRAINING_CONFIG_DIR])
-            base_accuracy=data_trainer_info[MODEL_TRAINING_BASE_ACCURACY]
+            artifact_dir = self.training_pipeline_config.artifact_dir
 
-            model_training_config= ModelTrainerConfig(trained_model_file_path=trained_model_file_path,
-                                                      trained_model_config_file_path=trained_model_config_file_path,
-                                                      base_accuracy=base_accuracy)
+            model_trainer_artifact_dir=os.path.join(
+                artifact_dir,
+                MODEL_TRAINER_ARTIFACT_DIR,
+                self.time_stamp
+            )
+            
+            model_trainer_config_info = self.config_info[MODEL_TRAINER_CONFIG_KEY]
+            trained_model_file_path = os.path.join(model_trainer_artifact_dir,
+            model_trainer_config_info[MODEL_TRAINER_TRAINED_MODEL_DIR_KEY],
+            model_trainer_config_info[MODEL_TRAINER_TRAINED_MODEL_FILE_NAME_KEY]
+            )
 
-            logging.info(f"model_trainer_config:{model_training_config}")
-            return model_training_config
+            model_config_file_path = os.path.join(model_trainer_config_info[MODEL_TRAINER_MODEL_CONFIG_DIR_KEY],
+            model_trainer_config_info[MODEL_TRAINER_MODEL_CONFIG_FILE_NAME_KEY]
+            )
+
+            base_accuracy = model_trainer_config_info[MODEL_TRAINER_BASE_ACCURACY_KEY]
+
+            model_trainer_config = ModelTrainerConfig(
+                trained_model_file_path=trained_model_file_path,
+                base_accuracy=base_accuracy,
+                model_config_file_path=model_config_file_path
+            )
+            logging.info(f"Model trainer config: {model_trainer_config}")
+            return model_trainer_config
         except Exception as e:
-            raise HousingException(e, sys) from e
+            raise HousingException(e,sys) from e
             
     def get_model_evaluation_config(self)-> ModelEvaluationConfig:
         try:
