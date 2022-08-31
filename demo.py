@@ -1,28 +1,29 @@
-from multiprocessing.connection import Pipe
-from housing.exception import HousingException
 from housing.pipeline.pipeline import Pipeline
-import os, sys
-from housing.logger import logging
 from housing.exception import HousingException
-from housing.config.configuration import Configuration
+from housing.logger import logging
+from housing.config.configuration import Configuartion
 from housing.component.data_transformation import DataTransformation
-
+import os
 def main():
     try:
-        pipeline=Pipeline()
-        pipeline.run_pipeline()
-        #config= Configuration().get_model_trainer_config()
-        #print(config)
-        #config= Configuration()
-        #print(config.get_data_transformation_config())
-        #schema_file_path="/Users/vikaslakka/Desktop/FSDS/Machine_learning/Projects/sample_project_12_jul/FSDS_sample_project_23_jul/config/schema.yaml"
-        #file_path= "/Users/vikaslakka/Desktop/FSDS/Machine_learning/Projects/sample_project_12_jul/FSDS_sample_project_23_jul/housing/artifact/data_ingestion/22-08-11-17-36-45/ingested_data/test/housing.csv"
-        #df= DataTransformation.load_data(file_path, schema_file_path=schema_file_path)
-        #print(df.dtypes)
-        #print(df.columns)
+        config_path = os.path.join("config","config.yaml")
+        pipeline = Pipeline(Configuartion(config_file_path=config_path))
+        #pipeline.run_pipeline()
+        pipeline.start()
+        logging.info("main function execution completed.")
+        # # data_validation_config = Configuartion().get_data_transformation_config()
+        # # print(data_validation_config)
+        # schema_file_path=r"D:\Project\machine_learning_project\config\schema.yaml"
+        # file_path=r"D:\Project\machine_learning_project\housing\artifact\data_ingestion\2022-06-27-19-13-17\ingested_data\train\housing.csv"
+
+        # df= DataTransformation.load_data(file_path=file_path,schema_file_path=schema_file_path)
+        # print(df.columns)
+        # print(df.dtypes)
+
     except Exception as e:
         logging.error(f"{e}")
         print(e)
+
 
 
 if __name__=="__main__":

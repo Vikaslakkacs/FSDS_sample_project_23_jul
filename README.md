@@ -17,7 +17,7 @@ conda create -p <venv name> python==3.7 -y
 
 ```
 
-conad activate <venv name>
+conda activate <venv name>
 or 
 conda activate <venv name>/
 ```

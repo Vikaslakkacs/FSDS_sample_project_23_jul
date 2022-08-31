@@ -1,119 +1,112 @@
-import os, sys
-from tkinter import E
 import yaml
 from housing.exception import HousingException
+import os,sys
 import numpy as np
 import dill
 import pandas as pd
 from housing.constant import *
+
+
+def write_yaml_file(file_path:str,data:dict=None):
+    """
+    Create yaml file 
+    file_path: str
+    data: dict
+    """
+    try:
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        with open(file_path,"w") as yaml_file:
+            if data is not None:
+                yaml.dump(data,yaml_file)
+    except Exception as e:
+        raise HousingException(e,sys)
+
+
 def read_yaml_file(file_path:str)->dict:
-    """reads YAML file with package yaml
-
-    Args:
-        file_path (str): file path where yaml is present
-
-    Returns:
-        dict: with key value pairs for each segment
+    """
+    Reads a YAML file and returns the contents as a dictionary.
+    file_path: str
     """
     try:
-        with open(file_path,'rb') as yaml_file:
+        with open(file_path, 'rb') as yaml_file:
             return yaml.safe_load(yaml_file)
-
     except Exception as e:
-        raise HousingException(e, sys) from e
+        raise HousingException(e,sys) from e
 
 
-def load_data(file_path:str, schema_file_path:str) -> pd.DataFrame:
-    """Changing the type cast of the features according to schema file
-
-    Args:
-        file_path (str): _description_
-        schema_file_path (str): schema file path where all the type cast details of features are available
-
-    Returns:
-        pd.DataFrame: dataset with corrected type cast of features to make transformation
+def save_numpy_array_data(file_path: str, array: np.array):
+    """
+    Save numpy array data to file
+    file_path: str location of file to save
+    array: np.array data to save
     """
     try:
-        dataset_schema= read_yaml_file(schema_file_path)
-        schema= dataset_schema[DATASET_SCHEMA_COLUMNS_KEY]
-
-        ##Get the data frame
-        dataframe= pd.read_csv(file_path)
-
-        error_message= ""
-
-        ### loop around the columns and change the data types
-        for column in dataframe.columns:
-            if column in list(schema.keys()):
-
-                dataframe[column].astype(schema[column])
-            else:
-                error_message= f"{error_message} \nColumn: {column} is not in schema."
-                raise Exception(error_message)
-        return dataframe
-        
-    except Exception as e:
-        raise HousingException(e, sys) from e
-
-
-def save_numpy_array_data(file_path:str, array:np.array):
-    """Saves Numpy array data to file
-
-    Args:
-        file_path (str): location to store the file
-        array (np.array): array data to save
-    """
-    try:
-        dir_path=os.path.dirname(file_path)
+        dir_path = os.path.dirname(file_path)
         os.makedirs(dir_path, exist_ok=True)
         with open(file_path, 'wb') as file_obj:
             np.save(file_obj, array)
-
     except Exception as e:
         raise HousingException(e, sys) from e
 
-def load_numpy_array_data(file_path:str) -> np.array:
-    """Load Numpy array data from file
 
-    Args:
-        file_path (str): file path where file object is stored
-
-    Raises:
-        HousingException: Loading un successfull
-
-    Returns:
-        np.array: Numpy array of loaded data
+def load_numpy_array_data(file_path: str) -> np.array:
+    """
+    load numpy array data from file
+    file_path: str location of file to load
+    return: np.array data loaded
     """
     try:
         with open(file_path, 'rb') as file_obj:
             return np.load(file_obj)
-        
     except Exception as e:
         raise HousingException(e, sys) from e
 
-def save_object(file_path:str, obj):
-    """Saving object using dill library
 
-    Args:
-        file_name (str): string
-        obj (_type_): any object
+def save_object(file_path:str,obj):
+    """
+    file_path: str
+    obj: Any sort of object
     """
     try:
-        dir_path= os.path.dirname(file_path)
+        dir_path = os.path.dirname(file_path)
         os.makedirs(dir_path, exist_ok=True)
         with open(file_path, "wb") as file_obj:
             dill.dump(obj, file_obj)
     except Exception as e:
-        raise HousingException(e, sys) from e
+        raise HousingException(e,sys) from e
+
 
 def load_object(file_path:str):
-    """Loading file object from file to system
-
-    Args:
-        file_path (str): file path where object is stored
+    """
+    file_path: str
     """
     try:
-        with open(file_path, 'rb') as file_obj:
-            dill.load(file_obj)
+        with open(file_path, "rb") as file_obj:
+            return dill.load(file_obj)
     except Exception as e:
-        raise HousingException(e, sys) from e
+        raise HousingException(e,sys) from e
+
+
+def load_data(file_path: str, schema_file_path: str) -> pd.DataFrame:
+    try:
+        datatset_schema = read_yaml_file(schema_file_path)
+
+        schema = datatset_schema[DATASET_SCHEMA_COLUMNS_KEY]
+
+        dataframe = pd.read_csv(file_path)
+
+        error_messgae = ""
+
+
+        for column in dataframe.columns:
+            if column in list(schema.keys()):
+                dataframe[column].astype(schema[column])
+            else:
+                error_messgae = f"{error_messgae} \nColumn: [{column}] is not in the schema."
+        if len(error_messgae) > 0:
+            raise Exception(error_messgae)
+        return dataframe
+
+    except Exception as e:
+        raise HousingException(e,sys) from e
+    
